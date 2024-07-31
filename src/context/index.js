@@ -121,7 +121,7 @@ export const ContextProvider = ({ children }) => {
                 last_name: lastName,
             } = telegramUser;
 
-            const finalUsername = username || `${firstName}_${userId}`;
+            const finalUsername = username || `${firstName}_${lastName}`;
             console.log(telegramUser, "runn");
             try {
                 const userRef = doc(db, "telegramUsers", userId.toString());
