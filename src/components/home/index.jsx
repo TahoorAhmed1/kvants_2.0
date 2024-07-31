@@ -16,6 +16,10 @@ import Footer from "../common/footer";
 import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
 import Header from "../common/header";
+
+const tele = window.Telegram.WebApp;
+tele.disableVerticalSwipes();
+
 const slideUp = keyframes`
   0% {
     opacity: 1;
@@ -319,7 +323,7 @@ const Home = () => {
       const distance = endY - startY;
 
       if (distance > 30) {
-        e.preventDefault(); // Prevent default scrolling
+        e.preventDefault();
       }
     };
 
@@ -334,6 +338,25 @@ const Home = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleContextMenu = (event) => event.preventDefault();
+    const handleKeyDown = (event) => {
+      if (
+        (event.ctrlKey && (event.key === "u" || event.key === "s")) ||
+        (event.ctrlKey && event.shiftKey && event.key === "i")
+      ) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   useEffect(() => {
     return () => {
       clearTimeout(debounceTimerRef.current);
@@ -471,7 +494,7 @@ const Home = () => {
               </SlideUpText>
             ))}
           </Container>
-          <div className="flex items-center gap-2 absolute bottom-0 z-10">
+          <div className="flex items-center gap-2 fixed bottom-20 z-10">
             <img
               alt="logo"
               src={kvaiCoin}
@@ -490,7 +513,7 @@ const Home = () => {
           />
         </div>
         <div className="">
-          <Footer fixed={false} currentPage={0} />
+          <Footer fixed={true} currentPage={0} />
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@ const Footer = ({ currentPage = 0, fixed = true }) => {
     <div
       className={classNames(
         "w-11/12 mx-auto bg-[#0C0F47E5] p-1 rounded-full grid grid-cols-4 ",
-        { "fixed bottom-6 left-1/2 -translate-x-1/2": fixed }
+        { "fixed bottom-2 left-1/2 -translate-x-1/2": fixed }
       )}
     >
       <Link
