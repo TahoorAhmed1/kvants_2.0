@@ -406,16 +406,17 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full min-h-screen text-white flex flex-col items-center gap-6 font-sans bg-[url('/src/assets/MainBackground.png')] overflow-x-hidden   bg-cover  pt-8 ">
-      <div className="px-0 w-full">
+    <div className="w-full min-h-screen text-white flex flex-col items-center gap-6 font-sans bg-[url('/src/assets/MainBackground.png')] overflow-hidden   bg-cover  pt-8 ">
+      {/* <div className="px-0 w-full">
         <Header />
-      </div>
-      <div className=" w-full flex justify-end px-6   ">
+      </div> */}
+      <div className=" w-full flex justify-between items-center px-4   ">
+        <p className="text-lg ">{telegramUser?.username}Tahoor</p>
         <div className="flex gap-4 items-center">
           <Link
             to={"https://t.me/kvantsnews"}
             target="_blank"
-            className=" bg-transparent border-gradAlt border float-right w-[202px]  px-4 py-2 rounded-full flex justify-center gap-2   items-center"
+            className=" bg-transparent border-gradAlt border float-right w-[190px]  px-4 py-2 rounded-full flex justify-center gap-2   items-center"
           >
             <span>Join Kvants</span>
             <img
