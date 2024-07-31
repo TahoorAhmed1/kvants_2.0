@@ -91,7 +91,7 @@ const Home = () => {
   const debounceTimerRef = useRef(null);
   const isUpdatingRef = useRef(false);
   const accumulatedBalanceRef = useRef(balance);
-  const accumulatedEnergyRef = useRef(energy);
+  const accumulatedEnergyRef = useRef(500);
   const accumulatedTapBalanceRef = useRef(tapBalance);
   const refillTimeoutRef = useRef(null);
   const refillDuration = 800; // 1 second in milliseconds

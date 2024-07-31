@@ -70,7 +70,7 @@ export const ContextProvider = ({ children }) => {
     const [taskCompleted, setTaskCompleted] = useState(false);
     const [taskCompleted2, setTaskCompleted2] = useState(false);
 
-    const accumulatedEnergyRef = useRef(energy);
+    const accumulatedEnergyRef = useRef(500);
     const [isRefilling, setIsRefilling] = useState(false);
     const refillDuration = timeRefill.duration * 60 * 1000;
     const refillSteps = timeRefill.step;
