@@ -3,7 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
@@ -24,6 +28,15 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- <link rel="preload" href="" as="image">
+    <link rel="preload" href="" as="image">
+    <link rel="preload" href="" as="image">
+    <link rel="preload" href="" as="image">
+    <link rel="preload" href="" as="image">
+    <link rel="preload" href="" as="image">
+    <link rel="preload" href="" as="image"> -->
     <title>React App</title>
   </head>
   <body>
@@ -41,3 +54,13 @@
     -->
   </body>
 </html>
+<script>
+  const overflow = 100;
+  document.body.style.overflowY = "hidden";
+
+  document.body.style.paddingTop = `${100}px`;
+  document.body.style.height = window.innerHeight + overflow + "px";
+  document.body.style.paddingBottom = `${overflow}px`;
+
+  window.scrollTo(0, overflow);
+</script>
