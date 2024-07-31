@@ -354,6 +354,8 @@ export const ContextProvider = ({ children }) => {
 
     return <UserContext.Provider value={value}>
 
-        {children}
+        {telegramUser ? children : <div className="min-h-screen flex items-center justify-center text-xl bg-[url('/src/assets/MainBackground.png')]">Loading...</div>}
+
+        { }
     </UserContext.Provider>;
 };
