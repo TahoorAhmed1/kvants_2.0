@@ -6,7 +6,7 @@ const Header = () => {
   const { telegramUser } = useUser();
 
   return (
-    <div className="flex items-center justify-between w-full font-sans py-[17px] px-[15.60px] ">
+    <div className="flex items-center justify-between w-full font-sans py-[17px] px-[17px] ">
       <Link
         to={"/"}
         className="flex justify-start items-center w-full bg-transparent"
