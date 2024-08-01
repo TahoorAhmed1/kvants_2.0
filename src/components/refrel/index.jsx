@@ -27,7 +27,7 @@ const ReferalSystem = () => {
   };
 
   return (
-    <div className="w-full min-h-screen text-white flex flex-col items-center gap-6 font-sans bg-[url('/src/assets/MainBackground.png')] overflow-x-hidden   bg-cover  pt-8 ">
+    <div className="w-full min-h-screen text-white flex flex-col items-center gap-6 font-sans bg-[url('/src/assets/MainBackground.png')] overflow-x-hidden   bg-cover  ">
       <div className="px-0 w-full">
         <Header />
       </div>
