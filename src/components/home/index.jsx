@@ -14,7 +14,7 @@ import {
 } from "../../assets";
 import Footer from "../common/footer";
 import styled, { keyframes } from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../common/header";
 
 const tele = window.Telegram.WebApp;
@@ -52,52 +52,53 @@ const Container = styled.div`
 `;
 
 const Home = () => {
-  const imgRef = useRef(null);
+  const navigate = useNavigate();
+  const imageRef = useRef(null);
   const [clicks, setClicks] = useState([]);
   const {
+    id,
+    refiller,
+    sendUserData,
     balance,
     tapBalance,
     energy,
     battery,
-    refiller,
-
+    tapGuru,
+    mainTap,
+    setIsRefilling,
+    isRefilling,
+    refillIntervalRef,
     setEnergy,
     tapValue,
     setTapBalance,
     setBalance,
     refBonus,
-    telegramUser,
-
-    sendUserData,
-    id,
+    level,
+    loading,
+    currentIndex,
+    setStartTapTime,
+    tapTimer,
+    startTapTime,
+    fetchStartTimeTap,
+    accumulatedEnergyRef,
+    setCurrentIndex,
   } = useUser();
+  const [isClicked, setIsClicked] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-
-  useEffect(() => {
-    window?.Telegram?.WebApp?.expand();
-
-    window?.Telegram?.WebApp?.ready();
-
-    window?.Telegram?.WebApp.setHeaderColor("#191b33");
-
-    if (window?.Telegram?.WebApp?.HapticFeedback) {
-      window?.Telegram?.WebApp.HapticFeedback.impactOccurred("medium");
-    }
-  }, []);
-  const [isRefilling, setIsRefilling] = useState(false);
   const [points, setPoints] = useState(0);
-  const [glowBooster, setGlowBooster] = useState(false);
-
+  // console.log(isStartTapTime, tapTimer);
   const debounceTimerRef = useRef(null);
+  const debounceButton = useRef(null);
   const isUpdatingRef = useRef(false);
   const accumulatedBalanceRef = useRef(balance);
-  const accumulatedEnergyRef = useRef(500);
   const accumulatedTapBalanceRef = useRef(tapBalance);
   const refillTimeoutRef = useRef(null);
+  const [glowBooster, setGlowBooster] = useState(false);
+
   const refillDuration = 800; // 1 second in milliseconds
   const incrementValue = 1; // Increment by 1 each step
   const defaultEnergy = 0; //
-  const refillIntervalRef = useRef(null);
+  const [disableRoutes, setDisableRoutes] = useState(false);
 
   const startRefillInterval = () => {
     if (refillIntervalRef.current) {
@@ -193,6 +194,7 @@ const Home = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
+    setDisableRoutes(true);
 
     if (energy == 0) {
       return;
@@ -224,7 +226,7 @@ const Home = () => {
         : "wobble-bottom";
 
     // Remove previous animations
-    imgRef.current.classList.remove(
+    imageRef.current.classList.remove(
       "wobble-top",
       "wobble-bottom",
       "wobble-left",
@@ -232,11 +234,11 @@ const Home = () => {
     );
 
     // Add the new animation class
-    imgRef.current.classList.add(animationClass);
+    imageRef.current.classList.add(animationClass);
 
     // Remove the animation class after animation ends to allow re-animation on the same side
     setTimeout(() => {
-      imgRef.current.classList.remove(animationClass);
+      imageRef.current.classList.remove(animationClass);
     }, 300); // duration should match the animation duration in CSS
 
     // Increment the count
@@ -249,7 +251,6 @@ const Home = () => {
 
     setClicks((prevClicks) => [...prevClicks, newClick]);
 
-    // Update state immediately for UI
     setEnergy((prevEnergy) => {
       const newEnergy = Math.max(prevEnergy - tapValue.value, 0); // Ensure energy does not drop below zero
       accumulatedEnergyRef.current = newEnergy;
@@ -280,7 +281,8 @@ const Home = () => {
     // Reset the debounce timer
     clearTimeout(debounceTimerRef.current);
     debounceTimerRef.current = setTimeout(updateFirestore, 200); // Adjust the delay as needed
-    // Adjust the delay as needed
+    clearTimeout(debounceButton.current);
+    debounceButton.current = setTimeout(() => setDisableRoutes(false), 200); // Adjust the delay as needed
 
     // Reset the refill time
     clearInterval(refillIntervalRef.current); // Stop refilling while the user is active
@@ -292,6 +294,14 @@ const Home = () => {
       }
     }, 10); // Set the inactivity period to 3 seconds (adjust as needed)
   };
+
+  console.log(disableRoutes);
+
+  useEffect(() => {
+    if (id) {
+      fetchStartTimeTap(id);
+    }
+  }, [fetchStartTimeTap]);
 
   function triggerHapticFeedback() {
     const isAndroid = /Android/i.test(navigator.userAgent);
@@ -322,15 +332,19 @@ const Home = () => {
       const endY = e.touches[0].clientY;
       const distance = endY - startY;
 
+      // Disable swipe-down if the user swipes downward
       if (distance > 30) {
-        e.preventDefault();
+        // Adjust threshold as needed
+        e.preventDefault(); // Prevent default scrolling
       }
     };
 
     document.addEventListener("touchstart", handleTouchStart, {
       passive: false,
     });
-    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+    });
 
     return () => {
       document.removeEventListener("touchstart", handleTouchStart);
@@ -339,25 +353,6 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const handleContextMenu = (event) => event.preventDefault();
-    const handleKeyDown = (event) => {
-      if (
-        (event.ctrlKey && (event.key === "u" || event.key === "s")) ||
-        (event.ctrlKey && event.shiftKey && event.key === "i")
-      ) {
-        event.preventDefault();
-      }
-    };
-
-    document.addEventListener("contextmenu", handleContextMenu);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("contextmenu", handleContextMenu);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-  useEffect(() => {
     return () => {
       clearTimeout(debounceTimerRef.current);
       clearTimeout(refillTimeoutRef.current);
@@ -373,7 +368,7 @@ const Home = () => {
   useEffect(() => {
     return () => {
       clearTimeout(debounceTimerRef.current);
-      clearInterval(refillIntervalRef?.current);
+      clearInterval(refillIntervalRef.current);
       clearTimeout(refillTimeoutRef.current);
     };
   }, []);
@@ -404,6 +399,20 @@ const Home = () => {
       }
     }
   };
+
+  const formatNumber = (num) => {
+    if (num < 100000) {
+      return new Intl.NumberFormat().format(num).replace(/,/g, " ");
+    } else if (num < 1000000) {
+      return new Intl.NumberFormat().format(num).replace(/,/g, " ");
+    } else {
+      return (num / 1000000).toFixed(3).replace(".", ".") + " M";
+    }
+  };
+
+  useEffect(() => {
+    sendUserData();
+  }, []);
 
   return (
     <div className="w-full min-h-screen text-white flex flex-col items-center gap-6 font-sans bg-[url('/src/assets/MainBackground.png')] overflow-hidden   bg-cover  pt-8 ">
@@ -483,7 +492,7 @@ const Home = () => {
               width={1000}
               height={1000}
               className=" h-[480px] wobble-img"
-              ref={imgRef}
+              ref={imageRef}
               priority
               loading="eager"
               alt="robot"
