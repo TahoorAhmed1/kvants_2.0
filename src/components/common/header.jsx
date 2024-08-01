@@ -6,7 +6,7 @@ const Header = () => {
   const { telegramUser } = useUser();
   console.log(telegramUser);
   function splitUsername(username) {
-    if (username.length > 8) {
+    if (username?.length > 8) {
       return username.slice(0, 8) + "...";
     } else {
       return username;
